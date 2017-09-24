@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
-with open('README') as file:
+with open('README.md') as file:
     long_description = file.read()
 
 setup(
