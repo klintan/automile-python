@@ -1,6 +1,12 @@
+certifi==2017.7.27.1
+chardet==3.0.4
 httplib2==0.10.3
-oauth2client==4.1.2
+idna==2.6
+oauthlib==2.0.4
 pyasn1==0.3.6
 pyasn1-modules==0.1.4
+requests==2.18.4
+requests-oauthlib==0.8.0
 rsa==3.4.2
 six==1.11.0
+urllib3==1.22
