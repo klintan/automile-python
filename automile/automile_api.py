@@ -98,46 +98,6 @@ class AutomileAPI():
         )
 
 
-class SimpleClass():
-    """Represents a collection of remote objects on the Automile service
-    Provides methods to search, fetch and create instances of the object type.
-    See the online documentation for the actual structure of remote objects.
-    """
-    _object_class = SimpleObject
-
-    def __init__(self, api, url_name, object_id_field):
-        self._api = api
-        self._url_name = url_name
-        self._object_id_field = object_id_field
-
-    def _url_of(self, obj=None, obj_id=None):
-        if obj_id is None:
-            obj_id = obj[self._object_id_field]
-        return '{}/{}'.format(self.url_name, obj_id)
-
-    @property
-    def url_name(self):
-        return self._url_name
-
-    @property
-    def api(self):
-        return self._api
-
-    def query(self):
-        "Create a query for objects of this type"
-        return Query(self)
-
-    def get(self, object_id):
-        "Fetch a single object by its identification"
-        resp = self.api.get(self._url_of(obj_id=object_id))
-        return self._object_class(self.api, self, resp['data'])
-
-    def create(self, data):
-        "Create a new object with the given data"
-        resp = self.api.post(self.url_name, data)
-        return self._object_class(self.api, self, resp['data'])
-
-
 class SingletonObject():
     """Represents a remote singleton object on Automile
     Implements __getattr__ for dict-like access to the data of the remote
@@ -222,6 +182,46 @@ class SimpleObject(SingletonObject):
         return None
 
 
+class SimpleClass():
+    """Represents a collection of remote objects on the Automile service
+    Provides methods to search, fetch and create instances of the object type.
+    See the online documentation for the actual structure of remote objects.
+    """
+    _object_class = SimpleObject
+
+    def __init__(self, api, url_name, object_id_field):
+        self._api = api
+        self._url_name = url_name
+        self._object_id_field = object_id_field
+
+    def _url_of(self, obj=None, obj_id=None):
+        if obj_id is None:
+            obj_id = obj[self._object_id_field]
+        return '{}/{}'.format(self.url_name, obj_id)
+
+    @property
+    def url_name(self):
+        return self._url_name
+
+    @property
+    def api(self):
+        return self._api
+
+    def query(self):
+        "Create a query for objects of this type"
+        return Query(self)
+
+    def get(self, object_id):
+        "Fetch a single object by its identification"
+        resp = self.api.get(self._url_of(obj_id=object_id))
+        return self._object_class(self.api, self, resp['data'])
+
+    def create(self, data):
+        "Create a new object with the given data"
+        resp = self.api.post(self.url_name, data)
+        return self._object_class(self.api, self, resp['data'])
+
+
 class Query():
     """Builds queries and fetches pages of remote objects
     """
@@ -289,7 +289,7 @@ class Query():
         self.filter = {}
         return self
 
-    #these are resource specific, is it something we can solve?
+    # these are resource specific, is it something we can solve?
     def filter_field(self, filter_field, filter_value):
         "Filter on a basic field, look for exact matches"
         return self.make_filter('field', filter_field, filter_value)

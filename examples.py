@@ -1,5 +1,4 @@
-from automile_api import AutomileAPI
-
+from automile.automile_api import AutomileAPI
 
 api = AutomileAPI(username="XX", password="XX", api_client="XX", api_secret="XX")
 
