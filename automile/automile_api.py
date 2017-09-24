@@ -257,31 +257,29 @@ class Query():
         if value == self._filter:
             return
         if value:
-            assert 'filter_type' in value and \
-                   'filter_field' in value and \
-                   'filter_value' in value
-            assert value['filter_type'] in (
-                'field',
-                'field-prefix',
-                'field-search',
-                'special'
-            )
+            # assert 'filter_type' in value and \
+            #        'filter_field' in value and \
+            #        'filter_value' in value
+            # assert value['filter_type'] in (
+            #     'field')
             self._filter = dict(value)
         else:
             self._filter = {}
-        self._count_cached = None
         return self
 
-    def make_filter(self, filter_type=None, filter_field=None,
+    def make_filter(self, filter_field=None,
                     filter_value=None):
-        if None in (filter_type, filter_field, filter_value):
+        """
+        Will only support one field for now
+        :param filter_field:
+        :param filter_value:
+        :return: self
+        """
+        self.filter = {}
+        if None in (filter_field, filter_value):
             self.filter = {}
         else:
-            self.filter = {
-                'filter_type': filter_type,
-                'filter_field': filter_field,
-                'filter_value': filter_value
-            }
+            self.filter[filter_field] = filter_value
         return self
 
     def remove_filter(self):
@@ -292,11 +290,7 @@ class Query():
     # these are resource specific, is it something we can solve?
     def filter_field(self, filter_field, filter_value):
         "Filter on a basic field, look for exact matches"
-        return self.make_filter('field', filter_field, filter_value)
-
-    def search(self, search_terms):
-        "Filter by a full data search (exact meaning depends on object type)"
-        return self.make_filter('special', 'search', search_terms)
+        return self.make_filter(filter_field, filter_value)
 
     def get_results(self):
         "Fetch objects for the one-based page number"
