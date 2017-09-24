@@ -13,5 +13,5 @@ setup(
     long_description=long_description,
     url='https://api.automile.com',
     license='MIT',
-    py_modules=['automile_api'],
+    py_modules=['automile/automile_api'],
 )
