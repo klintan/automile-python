@@ -23,14 +23,20 @@ class AutomileAPI():
         self._token = self.get_token()
 
         self._vehicles = None
-        self._drivers = None
+        self._contacts = None
         self._trips = None
+        self._triggers = None
+        self._place = None
+        self._geofence = None
+        self._task = None
+        self._workorders = None
+
         self._user_agent = user_agent or USER_AGENT
         self._api_base = api_base or API_URL_BASE
 
     def get_token(self):
         self._client = OAuth2Session(client=LegacyApplicationClient(client_id=self._api_client))
-        token = self._client.fetch_token(token_url='https://api.automile.com/v1/OAuth2/Token',
+        token = self._client.fetch_token(token_url='https://api.automile.com/oauth2/token',
                                          username=self._username, password=self._password, client_id=self._api_client,
                                          client_secret=self._api_secret)
         return token
@@ -43,11 +49,11 @@ class AutomileAPI():
         return self._vehicles
 
     @property
-    def drivers(self):
+    def contacts(self):
         "Provide access to the vehicles database"
-        if self._drivers is None:
-            self._drivers = SimpleClass(self, 'contacts', 'ContactId')
-        return self._drivers
+        if self._contacts is None:
+            self._contacts = SimpleClass(self, 'contacts', 'ContactId')
+        return self._contacts
 
     @property
     def trips(self):
@@ -55,6 +61,41 @@ class AutomileAPI():
         if self._trips is None:
             self._trips = SimpleClass(self, 'trips', 'TripId')
         return self._trips
+
+    @property
+    def triggers(self):
+        "Provide access to the vehicles database"
+        if self._triggers is None:
+            self._triggers = SimpleClass(self, 'triggers', 'TriggerId')
+        return self._triggers
+
+    @property
+    def place(self):
+        "Provide access to the vehicles database"
+        if self._place is None:
+            self._place = SimpleClass(self, 'place', 'PlaceId')
+        return self._place
+
+    @property
+    def geofence(self):
+        "Provide access to the vehicles database"
+        if self._geofence is None:
+            self._geofence = SimpleClass(self, 'geofence', 'GeofenceId')
+        return self._geofence
+
+    @property
+    def task(self):
+        "Provide access to the vehicles database"
+        if self._task is None:
+            self._task = SimpleClass(self, 'task', 'TaskId')
+        return self._task
+
+    @property
+    def workorders(self):
+        "Provide access to the vehicles database"
+        if self._workorders is None:
+            self._workorders = SimpleClass(self, 'workorders', 'WorkOrderId')
+        return self._workorders
 
     def get(self, obj, params=None, expect_content_type=None):
         "Perform a HTTP GET request to the Automile API"
@@ -214,12 +255,12 @@ class SimpleClass():
     def get(self, object_id):
         "Fetch a single object by its identification"
         resp = self.api.get(self._url_of(obj_id=object_id))
-        return self._object_class(self.api, self, resp['data'])
+        return self._object_class(self.api, self, resp.json())
 
     def create(self, data):
         "Create a new object with the given data"
         resp = self.api.post(self.url_name, data)
-        return self._object_class(self.api, self, resp['data'])
+        return self._object_class(self.api, self, resp.json())
 
 
 class Query():
@@ -235,7 +276,7 @@ class Query():
         query_args = {}
         query_args.update(self._get_queryargs())
         resp = self._type_class.api.get(self._type_class._url_name, query_args)
-        return resp
+        return resp.json()
 
     def _get_queryargs(self):
         args = {}
@@ -293,14 +334,13 @@ class Query():
         return self.make_filter(filter_field, filter_value)
 
     def get_results(self):
-        "Fetch objects for the one-based page number"
         resp = self._make_query()
         return [
             self._type_class._object_class(
                 self._type_class.api,
                 self._type_class,
                 o
-            ) for o in resp['data']
+            ) for o in resp
         ]
 
     def iter_all(self):

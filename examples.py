@@ -1,11 +1,13 @@
 from automile.automile_api import AutomileAPI
 
-api = AutomileAPI(username="XX", password="XX", api_client="XX", api_secret="XX")
+api = AutomileAPI(username="xx", password="xx",
+                  api_client="xx.automile.com", api_secret="xx")
 
 def example0():
     """ Create a test user in automile to get credentials
     :return:
     """
+    pass
 
 
 def example1(api):
