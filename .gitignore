@@ -4,3 +4,6 @@ include
 .idea
 .Python
 pip-selfcheck.json
+
+automile_api.egg-info
+dist
